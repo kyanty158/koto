@@ -20,6 +20,11 @@ class _ViewViewState extends ConsumerState<ViewView> {
   final TextEditingController _searchController = TextEditingController();
   String _searchTerm = '';
   final Set<int> _doneOverlay = <int>{};
+  // Multi-select state
+  bool _selectionMode = false;
+  final Set<int> _selected = <int>{};
+  // Track currently visible memo ids for Select All
+  List<int> _visibleMemoIds = const [];
 
   @override
   void initState() {
@@ -44,8 +49,64 @@ class _ViewViewState extends ConsumerState<ViewView> {
     final tier = ref.watch(subscriptionProvider);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('メモ一覧'),
-        bottom: tier == SubscriptionTier.pro
+        leading: _selectionMode
+            ? IconButton(
+                icon: const Icon(Icons.close),
+                onPressed: () {
+                  setState(() {
+                    _selectionMode = false;
+                    _selected.clear();
+                  });
+                },
+              )
+            : null,
+        title: _selectionMode
+            ? Text('${_selected.length}件選択')
+            : const Text('メモ一覧'),
+        actions: _selectionMode
+            ? [
+                IconButton(
+                  tooltip: 'すべて選択/解除',
+                  icon: Icon(
+                    _selected.length == _visibleMemoIds.length && _visibleMemoIds.isNotEmpty
+                        ? Icons.check_box
+                        : Icons.check_box_outline_blank,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      if (_selected.length == _visibleMemoIds.length) {
+                        _selected.clear();
+                      } else {
+                        _selected
+                          ..clear()
+                          ..addAll(_visibleMemoIds);
+                      }
+                    });
+                  },
+                ),
+                IconButton(
+                  tooltip: '選択したメモを削除',
+                  icon: const Icon(Icons.delete_outline, color: Colors.red),
+                  onPressed: _selected.isEmpty
+                      ? null
+                      : () async {
+                          final db = await ref.read(isarProvider.future);
+                          await _deleteSelected(db);
+                        },
+                ),
+              ]
+            : [
+                TextButton(
+                  onPressed: () {
+                    setState(() {
+                      _selectionMode = true;
+                      _selected.clear();
+                    });
+                  },
+                  child: const Text('選択'),
+                ),
+              ],
+        bottom: !_selectionMode && tier == SubscriptionTier.pro
             ? PreferredSize(
                 preferredSize: const Size.fromHeight(kToolbarHeight),
                 child: Padding(
@@ -104,6 +165,12 @@ class _ViewViewState extends ConsumerState<ViewView> {
                 final pinnedIds = pinned.map((e) => e.id).toSet();
                 final remaining = memos.where((m) => !pinnedIds.contains(m.id)).toList();
 
+                // Update visible ids for Select All (pinned + remaining in view order)
+                _visibleMemoIds = [
+                  ...pinned.map((e) => e.id),
+                  ...remaining.map((e) => e.id),
+                ];
+
                 if (memos.isEmpty) {
                   return const Center(child: Text('メモがありません'));
                 }
@@ -157,65 +224,7 @@ class _ViewViewState extends ConsumerState<ViewView> {
     }
   }
 
-  Future<void> _showContextMenu(Isar db, Memo memo) async {
-    // ignore: use_build_context_synchronously
-    showModalBottomSheet<void>(
-      context: context,
-      builder: (ctx) {
-        return SafeArea(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                leading: const Icon(Icons.edit),
-                title: const Text('編集'),
-                onTap: () async {
-                  Navigator.of(ctx).pop();
-                  // ignore: use_build_context_synchronously
-                  final changed = await Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => EditView(memoId: memo.id),
-                    ),
-                  );
-                  if (changed == true && mounted) setState(() {});
-                },
-              ),
-              ListTile(
-                leading: Icon(memo.isDone ? Icons.undo : Icons.check),
-                title: Text(memo.isDone ? '未完了にする' : '完了にする'),
-                onTap: () async {
-                  Navigator.of(ctx).pop();
-                  await _toggleDone(db, memo);
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.notifications_active),
-                title: const Text('リマインド変更'),
-                onTap: () async {
-                  Navigator.of(ctx).pop();
-                  await _changeReminder(db, memo);
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.delete, color: Colors.red),
-                title: const Text('削除'),
-                onTap: () async {
-                  Navigator.of(ctx).pop();
-                  await db.writeTxn(() async {
-                    await db.memos.delete(memo.id);
-                  });
-                  if (memo.reminderAt != null) {
-                    await NotificationService.instance.cancelReminder(memo.id);
-                  }
-                },
-              ),
-              const SizedBox(height: 4),
-            ],
-          ),
-        );
-      },
-    );
-  }
+  // 以前の単体操作用コンテキストメニューは未使用のため削除
 
   Widget _buildPinnedSection(Isar db, List<Memo> pinned) {
     return Padding(
@@ -238,7 +247,18 @@ class _ViewViewState extends ConsumerState<ViewView> {
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 4),
                   child: InkWell(
+                    onTap: () {
+                      if (_selectionMode) {
+                        setState(() => _toggleSelect(m.id));
+                      }
+                    },
                     onLongPress: () async {
+                      if (_selectionMode) {
+                        setState(() {
+                          _toggleSelect(m.id);
+                        });
+                        return;
+                      }
                       final changed = await Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (_) => EditView(memoId: m.id),
@@ -248,33 +268,45 @@ class _ViewViewState extends ConsumerState<ViewView> {
                     },
                     child: Row(
                       children: [
-                        const Icon(Icons.notifications_active, size: 16, color: Colors.amber),
-                        const SizedBox(width: 6),
-                        Expanded(
-                          child: Text(m.text, maxLines: 1, overflow: TextOverflow.ellipsis),
-                        ),
-                        const SizedBox(width: 8),
-                        Text('${m.reminderAt!.toLocal()}'.substring(0, 16),
-                            style: const TextStyle(color: Colors.black54)),
-                        const SizedBox(width: 4),
-                        IconButton(
-                          tooltip: 'リマインド変更',
-                          icon: const Icon(Icons.edit_notifications, size: 18),
-                          onPressed: () => _changeReminder(db, m),
-                        ),
-                        IconButton(
-                          tooltip: '解除',
-                          icon: const Icon(Icons.close, size: 18),
-                          onPressed: () async {
-                            await db.writeTxn(() async {
-                              m.reminderAt = null;
-                              m.updatedAt = DateTime.now().toUtc();
-                              await db.memos.put(m);
-                            });
-                            await NotificationService.instance.cancelReminder(m.id);
-                            if (mounted) setState(() {});
-                          },
-                        ),
+                        if (_selectionMode) ...[
+                          Checkbox(
+                            value: _selected.contains(m.id),
+                            onChanged: (_) {
+                              setState(() => _toggleSelect(m.id));
+                            },
+                          ),
+                          Expanded(
+                            child: Text(m.text, maxLines: 1, overflow: TextOverflow.ellipsis),
+                          ),
+                        ] else ...[
+                          const Icon(Icons.notifications_active, size: 16, color: Colors.amber),
+                          const SizedBox(width: 6),
+                          Expanded(
+                            child: Text(m.text, maxLines: 1, overflow: TextOverflow.ellipsis),
+                          ),
+                          const SizedBox(width: 8),
+                          Text('${m.reminderAt!.toLocal()}'.substring(0, 16),
+                              style: const TextStyle(color: Colors.black54)),
+                          const SizedBox(width: 4),
+                          IconButton(
+                            tooltip: 'リマインド変更',
+                            icon: const Icon(Icons.edit_notifications, size: 18),
+                            onPressed: () => _changeReminder(db, m),
+                          ),
+                          IconButton(
+                            tooltip: '解除',
+                            icon: const Icon(Icons.close, size: 18),
+                            onPressed: () async {
+                              await db.writeTxn(() async {
+                                m.reminderAt = null;
+                                m.updatedAt = DateTime.now().toUtc();
+                                await db.memos.put(m);
+                              });
+                              await NotificationService.instance.cancelReminder(m.id);
+                              if (mounted) setState(() {});
+                            },
+                          ),
+                        ],
                       ],
                     ),
                   ),
@@ -285,6 +317,8 @@ class _ViewViewState extends ConsumerState<ViewView> {
       ),
     );
   }
+
+  // 以前のピン留め用選択シートは削除（AppBarの「選択」ボタンで統一）
 
   Widget _buildMemoCard(Isar db, Memo memo) {
     final overdue = memo.reminderAt != null && memo.reminderAt!.isBefore(DateTime.now().toUtc());
@@ -298,27 +332,34 @@ class _ViewViewState extends ConsumerState<ViewView> {
               borderRadius: BorderRadius.circular(12.0),
             ),
             child: ListTile(
-              leading: AnimatedContainer(
-                duration: const Duration(milliseconds: 180),
-                curve: Curves.easeOut,
-                width: 24,
-                height: 24,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: (_doneOverlay.contains(memo.id) || memo.isDone)
-                      ? Colors.green
-                      : Colors.transparent,
-                  border: Border.all(
-                    color: (_doneOverlay.contains(memo.id) || memo.isDone)
-                        ? Colors.green
-                        : Colors.grey,
-                    width: 2,
-                  ),
-                ),
-                child: (_doneOverlay.contains(memo.id) || memo.isDone)
-                    ? const Icon(Icons.check, size: 16, color: Colors.white)
-                    : null,
-              ),
+              leading: _selectionMode
+                  ? Checkbox(
+                      value: _selected.contains(memo.id),
+                      onChanged: (_) {
+                        setState(() => _toggleSelect(memo.id));
+                      },
+                    )
+                  : AnimatedContainer(
+                      duration: const Duration(milliseconds: 180),
+                      curve: Curves.easeOut,
+                      width: 24,
+                      height: 24,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: (_doneOverlay.contains(memo.id) || memo.isDone)
+                            ? Colors.green
+                            : Colors.transparent,
+                        border: Border.all(
+                          color: (_doneOverlay.contains(memo.id) || memo.isDone)
+                              ? Colors.green
+                              : Colors.grey,
+                          width: 2,
+                        ),
+                      ),
+                      child: (_doneOverlay.contains(memo.id) || memo.isDone)
+                          ? const Icon(Icons.check, size: 16, color: Colors.white)
+                          : null,
+                    ),
               title: Text(
                 memo.text,
                 maxLines: 2,
@@ -331,6 +372,10 @@ class _ViewViewState extends ConsumerState<ViewView> {
               ),
               subtitle: Text('${memo.createdAt.toLocal()}'.substring(0, 16)),
               onTap: () async {
+                if (_selectionMode) {
+                  setState(() => _toggleSelect(memo.id));
+                  return;
+                }
                 final changed = await Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (_) => EditView(memoId: memo.id),
@@ -339,7 +384,15 @@ class _ViewViewState extends ConsumerState<ViewView> {
                 if (changed == true && mounted) setState(() {});
               },
               onLongPress: () {
-                _showContextMenu(db, memo);
+                if (_selectionMode) {
+                  setState(() => _toggleSelect(memo.id));
+                } else {
+                  setState(() {
+                    _selectionMode = true;
+                    _selected.clear();
+                    _selected.add(memo.id);
+                  });
+                }
               },
             ),
           ),
@@ -403,18 +456,22 @@ class _ViewViewState extends ConsumerState<ViewView> {
                     lastDate: DateTime(now.year + 5),
                   );
                   if (date == null) {
+                    if (!ctx.mounted) return;
                     Navigator.of(ctx).pop();
                     return;
                   }
+                  if (!ctx.mounted) return;
                   final time = await showTimePicker(
                     context: ctx,
                     initialTime: TimeOfDay.fromDateTime(now.add(const Duration(hours: 1))),
                   );
                   if (time == null) {
+                    if (!ctx.mounted) return;
                     Navigator.of(ctx).pop();
                     return;
                   }
                   final selected = DateTime(date.year, date.month, date.day, time.hour, time.minute);
+                  if (!ctx.mounted) return;
                   Navigator.of(ctx).pop(selected);
                 },
               ),
@@ -436,6 +493,61 @@ class _ViewViewState extends ConsumerState<ViewView> {
         when: selected,
         title: 'KOTO リマインダー',
         body: memo.text,
+      );
+    }
+  }
+
+  void _toggleSelect(int id) {
+    if (_selected.contains(id)) {
+      _selected.remove(id);
+      if (_selected.isEmpty) {
+        // Optionally exit selection mode automatically
+        // _selectionMode = false;
+      }
+    } else {
+      _selected.add(id);
+    }
+  }
+
+  Future<void> _deleteSelected(Isar db) async {
+    if (_selected.isEmpty) return;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('削除の確認'),
+        content: Text('${_selected.length}件のメモを削除しますか？'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: const Text('キャンセル'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: const Text('削除'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true) return;
+
+    final ids = _selected.toList();
+    await db.writeTxn(() async {
+      for (final id in ids) {
+        await db.memos.delete(id);
+      }
+    });
+    // Cancel any scheduled notifications for these ids
+    for (final id in ids) {
+      await NotificationService.instance.cancelReminder(id);
+    }
+    if (!mounted) return;
+    setState(() {
+      _selected.clear();
+      _selectionMode = false;
+    });
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('${ids.length}件のメモを削除しました')),
       );
     }
   }
