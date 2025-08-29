@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar/isar.dart';
 import 'package:koto/firebase_options.dart';
@@ -33,26 +34,44 @@ Future<void> main() async {
   final sw = Stopwatch()..start();
 
   // Firebaseの初期化
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  // 一部SDKが自動検出を試みてログを出すため、明示的に最速で初期化する
+  try {
+    if (Firebase.apps.isEmpty) {
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
+    }
+  } catch (e) {
+    // duplicate などは無視して継続
+    debugPrint('Firebase init note: $e');
+  }
 
-  // 通知の初期化
-  await NotificationService.instance.initialize();
+  // 通知の初期化は初回フレーム描画後に遅延実行して起動をブロックしない
+  WidgetsBinding.instance.addPostFrameCallback((_) async {
+    try {
+      await NotificationService.instance.initialize();
+    } catch (e) {
+      debugPrint('Notification init error: $e');
+    }
+  });
 
   debugPrint('[KPI] Init took: ${sw.elapsedMilliseconds} ms');
   kpiInitMs.value = sw.elapsedMilliseconds;
 
-  // Sentryの初期化（DSNキーを実際のものに置き換えてください）
-  await SentryFlutter.init(
-    (options) {
-      // Read DSN from --dart-define=SENTRY_DSN (empty disables SDK automatically)
-      const dsn = String.fromEnvironment('SENTRY_DSN');
-      options.dsn = dsn;
-      options.tracesSampleRate = 1.0;
-    },
-    appRunner: () => runApp(const ProviderScope(child: MyApp())),
-  );
+  // Sentryは Release かつ DSN が設定されているときのみ有効化
+  const dsn = String.fromEnvironment('SENTRY_DSN');
+  final enableSentry = kReleaseMode && dsn.isNotEmpty;
+  if (enableSentry) {
+    await SentryFlutter.init(
+      (options) {
+        options.dsn = dsn;
+        options.tracesSampleRate = 1.0;
+      },
+      appRunner: () => runApp(const ProviderScope(child: MyApp())),
+    );
+  } else {
+    runApp(const ProviderScope(child: MyApp()));
+  }
 }
 
 class MyApp extends ConsumerWidget {
@@ -172,22 +191,37 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // Avoid auto-resizing body by keyboard; we handle lifting manually in views
+      resizeToAvoidBottomInset: false,
       body: Center(
         child: _widgetOptions.elementAt(_selectedIndex),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.edit),
-            label: '書く',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.view_list),
-            label: '見る',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
+      // Lift bottom nav above the keyboard so it stays accessible
+      bottomNavigationBar: Builder(
+        builder: (ctx) {
+          final bottomInset = MediaQuery.of(ctx).viewInsets.bottom;
+          final hasKeyboard = bottomInset > 0;
+          final liftNav = hasKeyboard; // all tabs
+          return AnimatedContainer(
+            duration: const Duration(milliseconds: 180),
+            curve: Curves.easeOut,
+            padding: EdgeInsets.only(bottom: liftNav ? bottomInset : 0),
+            child: BottomNavigationBar(
+              items: const <BottomNavigationBarItem>[
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.edit),
+                  label: '書く',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.view_list),
+                  label: '見る',
+                ),
+              ],
+              currentIndex: _selectedIndex,
+              onTap: _onItemTapped,
+            ),
+          );
+        },
       ),
     );
   }

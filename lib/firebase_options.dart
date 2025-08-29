@@ -64,7 +64,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '517468367715',
     projectId: 'ston-3ed5b',
     storageBucket: 'ston-3ed5b.firebasestorage.app',
-    iosBundleId: 'com.example.koto',
+    iosBundleId: 'com.kantiva.koto',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
@@ -73,7 +73,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '517468367715',
     projectId: 'ston-3ed5b',
     storageBucket: 'ston-3ed5b.firebasestorage.app',
-    iosBundleId: 'com.example.koto',
+    iosBundleId: 'com.kantiva.koto',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
