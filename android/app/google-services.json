@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "517468367715",
+    "project_id": "ston-3ed5b",
+    "storage_bucket": "ston-3ed5b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:517468367715:android:a93fd1ddab113dd3830156",
+        "android_client_info": {
+          "package_name": "com.example.koto"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAfZhkyzw6bkTCeyNf4J5KG_feQypoQzDk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
