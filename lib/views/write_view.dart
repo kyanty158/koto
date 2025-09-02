@@ -236,136 +236,13 @@ class _WriteViewState extends ConsumerState<WriteView> with SingleTickerProvider
     // キーボード表示時にカードが隠れないように持ち上げる（BottomNav分を差し引いて二重上げを防止）
     final mq = MediaQuery.of(context);
     final keyboardInset = mq.viewInsets.bottom;
-    // BottomNav はキーボード分だけ持ち上がる → カードはキーボード高 + ナビ高を基準に少しだけ上げる
-    final double navHeight = kBottomNavigationBarHeight + mq.padding.bottom;
-    final double editorLiftBase = keyboardInset + navHeight; // キーボード + ナビ分
-    final double extraLift = keyboardInset > 0 ? 8.0 : 0.0; // 余白は控えめ
-    double editorLift = editorLiftBase + extraLift;
-    // 画面上に押し出されないよう上限を設定（画面高の45%まで）
-    final double maxLift = MediaQuery.of(context).size.height * 0.45;
-    if (editorLift > maxLift) editorLift = maxLift;
     final bool hasKeyboard = keyboardInset > 0;
-    return Scaffold(
-      // 自動リサイズを無効化し、手動で位置調整
-      resizeToAvoidBottomInset: false,
-      backgroundColor: Colors.grey[100],
-      body: Stack(
+    // 親Scaffoldが body をキーボード分だけリサイズしている前提
+    return Container(
+      color: Colors.grey[100],
+      child: Stack(
         children: [
-          Padding(
-            padding: EdgeInsets.only(bottom: editorLift),
-            child: Align(
-              alignment: Alignment.bottomCenter,
-              child: SafeArea(
-                top: true,
-                bottom: false,
-                child: Transform.translate(
-                  offset: Offset(_dragOffsetX, _dragOffsetY),
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: hasKeyboard ? 16.0 : 24.0, vertical: hasKeyboard ? 8.0 : 24.0),
-                    child: GestureDetector(
-                      dragStartBehavior: DragStartBehavior.down,
-                      behavior: HitTestBehavior.opaque,
-                      onTap: () {
-                        FocusScope.of(context).requestFocus(_focusNode);
-                      },
-                      onPanStart: (details) {
-                        // 右側からのドラッグのみ受け付ける（カード幅の60%より右）
-                        final box = _cardKey.currentContext?.findRenderObject() as RenderBox?;
-                        if (box != null && box.hasSize) {
-                          final local = box.globalToLocal(details.globalPosition);
-                          if (local.dx > box.size.width * 0.6) {
-                            _dragFromHandle = true;
-                          }
-                        }
-                      },
-                      onPanUpdate: (details) {
-                        if (_dragFromHandle || _showReminderChoices) {
-                          _handleDragUpdate(details);
-                        }
-                      },
-                      onPanEnd: (details) async {
-                        if (_dragFromHandle || _showReminderChoices) {
-                          await _handleDragEnd(details);
-                        }
-                        if (mounted) setState(() => _dragFromHandle = false);
-                      },
-                      onPanCancel: () {
-                        _resetDragState();
-                        if (mounted) setState(() => _dragFromHandle = false);
-                      },
-                      child: ConstrainedBox(
-                        constraints: BoxConstraints(
-                          maxHeight: (MediaQuery.of(context).size.height - editorLift - mq.padding.top - 8).clamp(140.0, MediaQuery.of(context).size.height * 0.9),
-                        ),
-                        child: Card(
-                          key: _cardKey,
-                          elevation: 8.0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16.0),
-                      ),
-                      child: Stack(
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.all(hasKeyboard ? 14.0 : 20.0),
-                            child: TextField(
-                              controller: _textController,
-                              focusNode: _focusNode,
-                              maxLines: null,
-                              enableInteractiveSelection: false, // ドラッグ操作優先（MVP）
-                              decoration: InputDecoration(
-                                border: InputBorder.none,
-                                hintText: _getGreeting(),
-                                hintStyle: TextStyle(color: Colors.grey[400]),
-                              ),
-                              style: const TextStyle(fontSize: 18.0),
-                            ),
-                          ),
-                          // 右端グラブハンドル（ここからドラッグで操作開始）
-                          Align(
-                            alignment: Alignment.centerRight,
-                            child: SizedBox(
-                              width: 28,
-                              height: double.infinity,
-                              child: IgnorePointer(
-                                ignoring: true,
-                                child: Padding(
-                                  padding: const EdgeInsets.only(right: 6.0),
-                                  child: Opacity(
-                                    opacity: 0.18,
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: const [
-                                        SizedBox(height: 4),
-                                        _GripDot(),
-                                        _GripDot(),
-                                        _GripDot(),
-                                        _GripDot(),
-                                        _GripDot(),
-                                        SizedBox(height: 4),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          if (_showSaveAffix && _lastSavedReminderAt != null)
-                            Positioned(
-                              right: 12,
-                              top: 8,
-                              child: ReminderBadge(
-                                when: _lastSavedReminderAt!,
-                                overdue: false,
-                              ),
-                            ),
-                        ],
-                      ),
-                    ).animate(controller: _animationController).slideY(begin: 0, end: 1, curve: Curves.easeInOut),
-                  ),
-                ),
-              ),
-            ),
-          ),
+          _buildEditorArea(0.0, hasKeyboard, mq),
 
           // （ハンドル主導のドラッグに移行したため Pan オーバーレイは撤去）
           const SizedBox.shrink(),
@@ -384,93 +261,225 @@ class _WriteViewState extends ConsumerState<WriteView> with SingleTickerProvider
           ),
 
           // 右ドラッグ時に現れるクイックリマインド付箋
-          if (_showReminderChoices)
-            Positioned.fill(
-              child: Padding(
-                padding: EdgeInsets.only(bottom: editorLift),
-                child: Align(
-                  alignment: Alignment.centerRight,
+          _showReminderChoices
+              ? Positioned.fill(
                   child: Padding(
-                    padding: const EdgeInsets.only(right: 12.0),
-                    child: Container(
-                      key: _railKey,
-                      width: _railWidth,
-                      decoration: BoxDecoration(
-                        color: const Color.fromRGBO(255, 255, 255, 0.95),
-                        borderRadius: BorderRadius.circular(16),
-                        boxShadow: const [
-                          BoxShadow(color: Colors.black26, blurRadius: 10, offset: Offset(0, 4)),
-                        ],
-                        border: Border.all(color: Colors.grey.shade200),
-                      ),
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Row(
+                    padding: EdgeInsets.zero,
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: Padding(
+                        padding: const EdgeInsets.only(right: 12.0),
+                        child: Container(
+                          key: _railKey,
+                          width: _railWidth,
+                          decoration: BoxDecoration(
+                            color: const Color.fromRGBO(255, 255, 255, 0.95),
+                            borderRadius: BorderRadius.circular(16),
+                            boxShadow: const [
+                              BoxShadow(color: Colors.black26, blurRadius: 10, offset: Offset(0, 4)),
+                            ],
+                            border: Border.all(color: Colors.grey.shade200),
+                          ),
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                          child: Column(
                             mainAxisSize: MainAxisSize.min,
-                            children: const [
-                              Icon(Icons.notifications_active, size: 14, color: Colors.black54),
-                              SizedBox(width: 6),
-                              Text('リマインド', style: TextStyle(fontSize: 12, color: Colors.black54)),
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: const [
+                                  Icon(Icons.notifications_active, size: 14, color: Colors.black54),
+                                  SizedBox(width: 6),
+                                  Text('リマインド', style: TextStyle(fontSize: 12, color: Colors.black54)),
+                                ],
+                              ),
+                              const SizedBox(height: 8),
+                              for (var i = 0; i < _dropOptions.length; i++) ...[
+                                _railChip(
+                                  icon: _dropOptions[i].icon,
+                                  label: _dropOptions[i].label,
+                                  color: Colors.amber[400]!,
+                                  selected: (_hoverTargetIndex == i) || (_latchedDropIndex == i),
+                                  onTap: () async {
+                                    final opt = _dropOptions[i];
+                                    final when = opt.whenBuilder != null
+                                        ? opt.whenBuilder!.call()
+                                        : DateTime.now().add(Duration(minutes: opt.minutes!));
+                                    await _saveMemo(reminderAt: when, reminderLabel: _dropOptions[i].label);
+                                    setState(() {
+                                      _showReminderChoices = false;
+                                      _latchedDropIndex = null;
+                                      _hoverTargetIndex = null;
+                                    });
+                                  },
+                                ),
+                                if (i != _dropOptions.length - 1) const SizedBox(height: 8),
+                              ],
                             ],
                           ),
-                          const SizedBox(height: 8),
-                          for (var i = 0; i < _dropOptions.length; i++) ...[
-                            _railChip(
-                              icon: _dropOptions[i].icon,
-                              label: _dropOptions[i].label,
-                              color: Colors.amber[400]!,
-                              selected: (_hoverTargetIndex == i) || (_latchedDropIndex == i),
-                              onTap: () async {
-                                final opt = _dropOptions[i];
-                                final when = opt.whenBuilder != null
-                                    ? opt.whenBuilder!.call()
-                                    : DateTime.now().add(Duration(minutes: opt.minutes!));
-                                await _saveMemo(reminderAt: when, reminderLabel: _dropOptions[i].label);
-                                setState(() {
-                                  _showReminderChoices = false;
-                                  _latchedDropIndex = null;
-                                  _hoverTargetIndex = null;
-                                });
-                              },
-                            ),
-                            if (i != _dropOptions.length - 1) const SizedBox(height: 8),
-                          ],
-                        ],
+                        ).animate().fadeIn(duration: 300.ms).slideX(begin: 0.15, end: 0, curve: Curves.easeOutCubic),
                       ),
-                    ).animate().fadeIn(duration: 300.ms).slideX(begin: 0.15, end: 0, curve: Curves.easeOutCubic),
+                    ),
                   ),
-                ),
-              ),
-            ),
+                )
+              : const SizedBox.shrink(),
 
           // ドロップ先プレビュー（選択中のラベルをレール左に表示）
-          if (_showReminderChoices && (_hoverTargetIndex != null || _latchedDropIndex != null))
-            _buildHoverPreview(),
+          (_showReminderChoices && (_hoverTargetIndex != null || _latchedDropIndex != null))
+              ? _buildHoverPreview()
+              : const SizedBox.shrink(),
 
           // 右側の保存完了チェック付箋（短い入場アニメで“保存した感”を強調）
-          if (_showRightSaveCheck && _rightSaveLabel != null)
-            Positioned.fill(
-              child: Align(
-                alignment: Alignment.centerRight,
-                child: Padding(
-                  padding: const EdgeInsets.only(right: 12.0),
-                  child: FittedBox(
-                    fit: BoxFit.scaleDown,
-                    child: _successChip(_rightSaveLabel!)
-                        .animate()
-                        .fadeIn(duration: 140.ms)
-                        .slideX(begin: 0.06, end: 0, curve: Curves.easeOutCubic)
-                        .scale(begin: Offset(0.96, 0.96), end: const Offset(1, 1), curve: Curves.easeOutBack),
+          (_showRightSaveCheck && _rightSaveLabel != null)
+              ? Positioned.fill(
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 12.0),
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: _successChip(_rightSaveLabel!)
+                            .animate()
+                            .fadeIn(duration: 140.ms)
+                            .slideX(begin: 0.06, end: 0, curve: Curves.easeOutCubic)
+                            .scale(begin: Offset(0.96, 0.96), end: const Offset(1, 1), curve: Curves.easeOutBack),
+                      ),
+                    ),
                   ),
-                ),
-              ),
-            ),
+                )
+              : const SizedBox.shrink(),
         ],
       ),
     );
+  }
+
+  Widget _buildEditorArea(double editorLift, bool hasKeyboard, MediaQueryData mq) {
+    final Alignment editorAlignment = hasKeyboard
+        ? Alignment.bottomCenter
+        : const Alignment(0, -0.4); // キーボード非表示時は少し上に配置
+    return Align(
+      alignment: editorAlignment,
+      child: SafeArea(
+        top: true,
+        bottom: true,
+        child: Transform.translate(
+          offset: Offset(_dragOffsetX, _dragOffsetY),
+          child: Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: hasKeyboard ? 16.0 : 24.0,
+              vertical: hasKeyboard ? 8.0 : 24.0,
+            ),
+            child: GestureDetector(
+                dragStartBehavior: DragStartBehavior.down,
+                behavior: HitTestBehavior.opaque,
+                onTap: () {
+                  FocusScope.of(context).requestFocus(_focusNode);
+                },
+                onPanStart: (details) {
+                  // 右側からのドラッグのみ受け付ける（カード幅の60%より右）
+                  final box = _cardKey.currentContext?.findRenderObject() as RenderBox?;
+                  if (box != null && box.hasSize) {
+                    final local = box.globalToLocal(details.globalPosition);
+                    if (local.dx > box.size.width * 0.6) {
+                      _dragFromHandle = true;
+                    }
+                  }
+                },
+                onPanUpdate: (details) {
+                  if (_dragFromHandle || _showReminderChoices) {
+                    _handleDragUpdate(details);
+                  }
+                },
+                onPanEnd: (details) async {
+                  if (_dragFromHandle || _showReminderChoices) {
+                    await _handleDragEnd(details);
+                  }
+                  if (mounted) setState(() => _dragFromHandle = false);
+                },
+                onPanCancel: () {
+                  _resetDragState();
+                  if (mounted) setState(() => _dragFromHandle = false);
+                },
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxHeight: (MediaQuery.of(context).size.height - mq.padding.top - 8)
+                        .clamp(140.0, MediaQuery.of(context).size.height * 0.9),
+                  ),
+                  child: Card(
+                    key: _cardKey,
+                    elevation: 8.0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16.0),
+                    ),
+                    child: Stack(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.all(hasKeyboard ? 14.0 : 20.0),
+                          child: TextField(
+                            controller: _textController,
+                            focusNode: _focusNode,
+                            maxLines: null,
+                            enableInteractiveSelection: false, // ドラッグ操作優先（MVP）
+                            decoration: InputDecoration(
+                              border: InputBorder.none,
+                              hintText: _getGreeting(),
+                              hintStyle: TextStyle(color: Colors.grey[400]),
+                            ),
+                            style: const TextStyle(fontSize: 18.0),
+                          ),
+                        ),
+                        // 右端グラブハンドル（ここからドラッグで操作開始）
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: SizedBox(
+                            width: 28,
+                            height: double.infinity,
+                            child: IgnorePointer(
+                              ignoring: true,
+                              child: Padding(
+                                padding: const EdgeInsets.only(right: 6.0),
+                                child: Opacity(
+                                  opacity: 0.18,
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: const [
+                                      SizedBox(height: 4),
+                                      _GripDot(),
+                                      _GripDot(),
+                                      _GripDot(),
+                                      _GripDot(),
+                                      _GripDot(),
+                                      SizedBox(height: 4),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        (_showSaveAffix && _lastSavedReminderAt != null)
+                            ? Positioned(
+                                right: 12,
+                                top: 8,
+                                child: ReminderBadge(
+                                  when: _lastSavedReminderAt!,
+                                  overdue: false,
+                                ),
+                              )
+                            : const SizedBox.shrink(),
+                      ],
+                    ),
+                  ).animate(controller: _animationController).slideY(
+                        begin: 0.12,
+                        end: 0,
+                        curve: Curves.easeOutCubic,
+                      ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
   }
 
   // 共通ドラッグ処理（右端ハンドル/外側オーバーレイから呼ばれる）

@@ -191,8 +191,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // Avoid auto-resizing body by keyboard; we handle lifting manually in views
-      resizeToAvoidBottomInset: false,
+      // キーボード表示時に body を自動リサイズ
+      resizeToAvoidBottomInset: true,
       body: Center(
         child: _widgetOptions.elementAt(_selectedIndex),
       ),
