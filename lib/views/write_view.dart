@@ -24,7 +24,6 @@ class WriteView extends ConsumerStatefulWidget {
 class _WriteViewState extends ConsumerState<WriteView> with SingleTickerProviderStateMixin {
   final TextEditingController _textController = TextEditingController();
   final FocusNode _focusNode = FocusNode();
-  late AnimationController _animationController;
 
   // ドラッグ操作の状態を管理
   double _dragOffsetY = 0.0;
@@ -97,7 +96,6 @@ class _WriteViewState extends ConsumerState<WriteView> with SingleTickerProvider
   @override
   void initState() {
     super.initState();
-    _animationController = AnimationController(vsync: this, duration: const Duration(milliseconds: 300));
 
     // 起動直後にキーボード表示（できるだけ早く）
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -113,7 +111,6 @@ class _WriteViewState extends ConsumerState<WriteView> with SingleTickerProvider
   void dispose() {
     _textController.dispose();
     _focusNode.dispose();
-    _animationController.dispose();
     _chipHideTimer?.cancel();
     _saveAffixTimer?.cancel();
     super.dispose();
@@ -469,7 +466,7 @@ class _WriteViewState extends ConsumerState<WriteView> with SingleTickerProvider
                             : const SizedBox.shrink(),
                       ],
                     ),
-                  ).animate(controller: _animationController).slideY(
+                  ).animate().slideY(
                         begin: 0.12,
                         end: 0,
                         curve: Curves.easeOutCubic,
