@@ -1,0 +1,52 @@
+todo:
+  - id: T-001
+    title: WriteView 位置/サイズの端末横断安定化
+    accept: "キーボード表示下でもカードが常に見える。iPhone 13/14/15実機/シミュで確認。"
+    done_when: |
+      - HomeScreen の resizeToAvoidBottomInset 有効化を前提に、WriteView 単体では手動リフトを使っていない
+      - 右/左/下ジェスチャが回帰せず機能
+      - dart analyze のエラー0
+  - id: T-002
+    title: Viewでの完了トグル（円アイコンタップ）
+    accept: "インジケータをタップで isDone を即時反映→Isar更新→リスト更新"
+    done_when: |
+      - UI即時反映→Isar書き込みが成功
+      - 通知が残っていればキャンセル
+      - widgetテスト1件追加
+  - id: T-003
+    title: GitHub Actions 最小CI
+    accept: "分析/テスト/フォーマットを自動実行。main/PRで走る"
+    done_when: |
+      - .github/workflows/flutter.yml 追加
+      - `flutter analyze` `flutter test` が成功
+  - id: T-004
+    title: Firebase iOS 設定の警告抑制手順の文書化
+    accept: "Runnerへ GoogleService-Info.plist を追加する手順を docs/ios_firebase.md に記述"
+    done_when: "ドキュメントがあり、Xcodeの操作手順とPBXへの追加が明記"
+  - id: T-005
+    title: 検索（Pro）のUX統一とガード
+    accept: "Pro時のみ検索バー表示。Basicでは非表示かつ直接Routeで入れない"
+    done_when: "tier切替でUIが期待通りに切り替わる"
+  - id: T-006
+    title: Firestore 同期のワイヤリング（開発フラグ下）
+    accept: "Proかつ devFlag 有効時のみ片方向(端末→FS)同期。LWW方針メモ付き"
+    done_when: "開発ビルドで明示的に有効化でき、CIでは無効"
+  - id: T-007
+    title: タグ抽出/月次カウントのユニットテスト
+    accept: "RegExpの境界/多言語ケース、月跨ぎカウントのテストを追加"
+    done_when: "flutter test Green"
+  - id: T-008
+    title: 右レールのヒット判定をテスト
+    accept: "高速ドロップ/未ラッチ時も保存されることのWidgetテスト"
+    done_when: "主要ケース2件が通る（保存/非保存）"
+  - id: T-009
+    title: Lints清掃
+    accept: "未使用import/関数/const化を可能な範囲で除去"
+    done_when: "dart analyze のwarningを20%削減（エラー0維持）"
+  - id: T-010
+    title: ドキュメント整備（KPI/操作ガイド）
+    accept: "README更新：操作方法（左/右/下/2本指）、KPIオーバーレイの意味を追記"
+    done_when: "READMEに追記が反映"
+doing: []
+done: []
+

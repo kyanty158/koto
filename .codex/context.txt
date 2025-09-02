@@ -1,0 +1,25 @@
+Repo Quick Context (KOTO)
+
+Entry
+- lib/main.dart: HomeScreen（BottomNavigationBar, resizeToAvoidBottomInset: true）
+- lib/views/write_view.dart: 書く。Container+Stackで、横長固定高カード。右ドラッグでレール。
+- lib/views/view_view.dart: 見る。Pinned + 通常。Proで検索バー。
+- lib/views/edit_view.dart: 編集。本文/完了/リマインド（クイック/日時）。
+
+Data
+- Isar: lib/models/memo.dart （UTC保存）。inlineTagsは #tag 自動抽出（小文字/重複排除）。
+- Subscription: lib/services/subscription_service.dart （現状free）。Basic制限あり。
+
+Notifications
+- lib/services/notification_service.dart：ローカル通知。完了/スヌーズ(+15m)/編集。
+
+Important Constraints
+- UTC保存/ローカル表示
+- Writeの3方向ジェスチャは守る
+- iOS 15+。Pod由来の警告は許容（将来整理）
+- Firebase plist はRunner未登録（警告出るが実害なし）
+
+Do not
+- ネットワーク依存の新機能を勝手に追加しない
+- Isarの互換を壊す変更を無断で行わない
+
