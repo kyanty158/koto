@@ -193,9 +193,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     return Scaffold(
       // キーボード表示時に body を自動リサイズ
       resizeToAvoidBottomInset: true,
-      body: Center(
-        child: _widgetOptions.elementAt(_selectedIndex),
-      ),
+      body: _widgetOptions.elementAt(_selectedIndex),
       // Lift bottom nav above the keyboard so it stays accessible
       bottomNavigationBar: Builder(
         builder: (ctx) {
