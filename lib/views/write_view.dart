@@ -397,11 +397,8 @@ class _WriteViewState extends ConsumerState<WriteView> with SingleTickerProvider
                   _resetDragState();
                   if (mounted) setState(() => _dragFromHandle = false);
                 },
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(
-                    maxHeight: (MediaQuery.of(context).size.height - mq.padding.top - 8)
-                        .clamp(140.0, MediaQuery.of(context).size.height * 0.9),
-                  ),
+                child: SizedBox(
+                  height: hasKeyboard ? 160.0 : 200.0,
                   child: Card(
                     key: _cardKey,
                     elevation: 8.0,
@@ -507,9 +504,10 @@ class _WriteViewState extends ConsumerState<WriteView> with SingleTickerProvider
     final absY = _dragOffsetY.abs();
 
     // 1) レール上で候補が確定していれば、距離に関係なく保存（右ドラッグ時）
-    if (_dragOffsetX > 0 && _showReminderChoices && _latchedDropIndex != null) {
+    if (_dragOffsetX > 0 && _showReminderChoices) {
       if (await _canSetReminder()) {
-        final idx = _latchedDropIndex!;
+        int? idx = _latchedDropIndex ?? _indexForGlobal(_lastGlobalPos);
+        idx ??= _defaultDropIndex();
         final opt = _dropOptions[idx];
         final when = opt.whenBuilder != null
             ? opt.whenBuilder!.call()
@@ -589,18 +587,7 @@ class _WriteViewState extends ConsumerState<WriteView> with SingleTickerProvider
     }
   }
 
-  void _startChipAutoHide() {
-    _chipHideTimer?.cancel();
-    _chipHideTimer = Timer(const Duration(seconds: 4), () {
-      if (mounted) {
-        setState(() {
-          _showReminderChoices = false;
-          _latchedDropIndex = null;
-          _hoverTargetIndex = null;
-        });
-      }
-    });
-  }
+  // auto-hide for the right save check handled separately; rail auto-hide removed
 
   void _startRightSaveCheckAutoHide() {
     Future.delayed(const Duration(milliseconds: 1400), () {
