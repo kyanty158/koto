@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:isar/isar.dart';
 import 'package:koto/main.dart';
 import 'package:koto/models/memo.dart';
 import 'package:koto/services/notification_service.dart';
