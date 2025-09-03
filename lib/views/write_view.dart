@@ -12,6 +12,7 @@ import 'package:flutter/services.dart';
 import 'package:koto/widgets/reminder_badge.dart';
 import 'package:koto/services/subscription_service.dart';
 import 'package:koto/app_globals.dart';
+import 'package:koto/utils/tags.dart';
 
 /// 「書く」モードの画面
 class WriteView extends ConsumerStatefulWidget {
@@ -154,7 +155,7 @@ class _WriteViewState extends ConsumerState<WriteView> with SingleTickerProvider
     }
     if (_textController.text.isNotEmpty) {
       // タグ抽出
-      final tags = _extractInlineTags(_textController.text);
+      final tags = extractInlineTags(_textController.text);
       final newMemo = Memo(
         text: _textController.text,
         createdAt: DateTime.now().toUtc(),
@@ -697,17 +698,7 @@ class _WriteViewState extends ConsumerState<WriteView> with SingleTickerProvider
     return true;
   }
 
-  List<String> _extractInlineTags(String text) {
-    final reg = RegExp(r'(^|\s)#([A-Za-z0-9_\-]+)');
-    final found = <String>{};
-    for (final m in reg.allMatches(text)) {
-      if (m.groupCount >= 2) {
-        final tag = m.group(2)!;
-        if (tag.isNotEmpty) found.add(tag.toLowerCase());
-      }
-    }
-    return found.toList()..sort();
-  }
+  // tag extraction moved to utils/tags.dart
 
   // Removed unused _stickyChip to satisfy analyzer (unused_element)
 

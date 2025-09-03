@@ -112,7 +112,7 @@ class MyApp extends ConsumerWidget {
                               color: const Color.fromRGBO(0, 0, 0, 0.6),
                               borderRadius: BorderRadius.circular(8),
                             ),
-                            child: Text('起動: '+val.toString()+' ms',
+                            child: Text('起動: $val ms',
                                 style: const TextStyle(color: Colors.white, fontSize: 12)),
                           ),
                         ),
@@ -129,7 +129,7 @@ class MyApp extends ConsumerWidget {
                                 color: const Color.fromRGBO(0, 0, 0, 0.6),
                                 borderRadius: BorderRadius.circular(8),
                               ),
-                              child: Text('復帰: '+warm.toString()+' ms',
+                              child: Text('復帰: $warm ms',
                                   style: const TextStyle(color: Colors.white, fontSize: 12)),
                             ),
                           );
