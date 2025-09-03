@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar/isar.dart';
 import 'package:koto/main.dart';
@@ -210,6 +211,9 @@ class _ViewViewState extends ConsumerState<ViewView> {
         memo.updatedAt = DateTime.now().toUtc();
         await db.memos.put(memo);
       });
+      if (newVal && memo.reminderAt != null) {
+        await NotificationService.instance.cancelReminder(memo.id);
+      }
     } catch (_) {
       // 失敗時はUIを元に戻す
       if (mounted) {
@@ -333,32 +337,40 @@ class _ViewViewState extends ConsumerState<ViewView> {
             ),
             child: ListTile(
               leading: _selectionMode
-                  ? Checkbox(
-                      value: _selected.contains(memo.id),
-                      onChanged: (_) {
-                        setState(() => _toggleSelect(memo.id));
+                   ? Checkbox(
+                       value: _selected.contains(memo.id),
+                       onChanged: (_) {
+                         setState(() => _toggleSelect(memo.id));
+                       },
+                     )
+                  : GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTap: () async {
+                        HapticFeedback.selectionClick();
+                        final db = await ref.read(isarProvider.future);
+                        await _toggleDone(db, memo);
                       },
-                    )
-                  : AnimatedContainer(
-                      duration: const Duration(milliseconds: 180),
-                      curve: Curves.easeOut,
-                      width: 24,
-                      height: 24,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: (_doneOverlay.contains(memo.id) || memo.isDone)
-                            ? Colors.green
-                            : Colors.transparent,
-                        border: Border.all(
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 180),
+                        curve: Curves.easeOut,
+                        width: 24,
+                        height: 24,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
                           color: (_doneOverlay.contains(memo.id) || memo.isDone)
                               ? Colors.green
-                              : Colors.grey,
-                          width: 2,
+                              : Colors.transparent,
+                          border: Border.all(
+                            color: (_doneOverlay.contains(memo.id) || memo.isDone)
+                                ? Colors.green
+                                : Colors.grey,
+                            width: 2,
+                          ),
                         ),
+                        child: (_doneOverlay.contains(memo.id) || memo.isDone)
+                            ? const Icon(Icons.check, size: 16, color: Colors.white)
+                            : null,
                       ),
-                      child: (_doneOverlay.contains(memo.id) || memo.isDone)
-                          ? const Icon(Icons.check, size: 16, color: Colors.white)
-                          : null,
                     ),
               title: Text(
                 memo.text,
