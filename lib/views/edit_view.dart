@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:koto/main.dart';
 import 'package:koto/models/memo.dart';
 import 'package:koto/services/notification_service.dart';
+import 'package:koto/utils/tags.dart';
 
 class EditView extends ConsumerStatefulWidget {
   final int memoId;
@@ -101,6 +102,7 @@ class _EditViewState extends ConsumerState<EditView> {
                     firstDate: now,
                     lastDate: DateTime(now.year + 5),
                   );
+                  if (!ctx.mounted) return;
                   if (date == null) {
                     Navigator.of(ctx).pop();
                     return;
@@ -109,6 +111,7 @@ class _EditViewState extends ConsumerState<EditView> {
                     context: ctx,
                     initialTime: TimeOfDay.fromDateTime(now.add(const Duration(hours: 1))),
                   );
+                  if (!ctx.mounted) return;
                   if (time == null) {
                     Navigator.of(ctx).pop();
                     return;
@@ -131,19 +134,7 @@ class _EditViewState extends ConsumerState<EditView> {
     }
   }
 
-  List<String> _extractInlineTags(String text) {
-    final reg = RegExp(r'(^|\s)#([A-Za-z0-9_\-]+)');
-    final found = <String>{};
-    for (final m in reg.allMatches(text)) {
-      if (m.groupCount >= 2) {
-        final tag = m.group(2)!;
-        if (tag.isNotEmpty) found.add(tag.toLowerCase());
-      }
-    }
-    final list = found.toList();
-    list.sort();
-    return list;
-  }
+  // tag extraction moved to utils/tags.dart
 
   Future<void> _save() async {
     if (_loaded == null) return;
@@ -155,7 +146,7 @@ class _EditViewState extends ConsumerState<EditView> {
 
     await isar.writeTxn(() async {
       memo.text = text;
-      memo.inlineTags = _extractInlineTags(text);
+      memo.inlineTags = extractInlineTags(text);
       memo.isDone = _isDone;
       memo.reminderAt = _reminderAt?.toUtc();
       memo.updatedAt = DateTime.now().toUtc();

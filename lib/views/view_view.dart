@@ -8,6 +8,8 @@ import 'package:koto/services/subscription_service.dart';
 import 'package:koto/services/notification_service.dart';
 import 'package:koto/widgets/reminder_badge.dart';
 import 'package:koto/views/edit_view.dart';
+import 'package:koto/views/paywall_view.dart';
+import 'package:koto/widgets/ad_banner.dart';
 
 /// 保存されたメモを一覧表示する画面
 class ViewView extends ConsumerStatefulWidget {
@@ -97,6 +99,22 @@ class _ViewViewState extends ConsumerState<ViewView> {
                 ),
               ]
             : [
+                if (tier == SubscriptionTier.free)
+                  TextButton(
+                    onPressed: () async {
+                      // Lazy import to avoid build-time coupling in this file
+                      // ignore: use_build_context_synchronously
+                      await Navigator.of(context).push(
+                        MaterialPageRoute(builder: (_) {
+                          // Import here to keep top of file tidy
+                          // ignore: avoid_types_on_closure_parameters
+                          return const _PaywallEntry();
+                        }),
+                      );
+                      setState(() {});
+                    },
+                    child: const Text('Proにする'),
+                  ),
                 TextButton(
                   onPressed: () {
                     setState(() {
@@ -173,24 +191,57 @@ class _ViewViewState extends ConsumerState<ViewView> {
                 ];
 
                 if (memos.isEmpty) {
-                  return const Center(child: Text('メモがありません'));
+                  return Column(
+                    children: [
+                      const Expanded(child: Center(child: Text('メモがありません'))),
+                      if (tier == SubscriptionTier.free) const AdBanner(),
+                    ],
+                  );
                 }
-                return ListView(
+                return Column(
                   children: [
-                    if (pinned.isNotEmpty) _buildPinnedSection(db, pinned),
-                    for (final memo in remaining) _buildMemoCard(db, memo),
+                    Expanded(
+                      child: ListView(
+                        children: [
+                          if (pinned.isNotEmpty) _buildPinnedSection(db, pinned),
+                          for (final memo in remaining) _buildMemoCard(db, memo),
+                        ],
+                      ),
+                    ),
+                    if (tier == SubscriptionTier.free) const AdBanner(),
                   ],
                 );
               } else if (snapshot.hasError) {
-                return Center(child: Text('Error: ${snapshot.error}'));
+                return Column(
+                  children: [
+                    Expanded(child: Center(child: Text('Error: ${snapshot.error}'))),
+                    if (tier == SubscriptionTier.free) const AdBanner(),
+                  ],
+                );
               } else {
-                return const Center(child: CircularProgressIndicator());
+                return Column(
+                  children: const [
+                    Expanded(child: Center(child: CircularProgressIndicator())),
+                    AdBanner(),
+                  ],
+                );
               }
             },
           );
         },
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (err, stack) => Center(child: Text('Error: $err')),      ),
+        loading: () => Column(
+          children: const [
+            Expanded(child: Center(child: CircularProgressIndicator())),
+            AdBanner(),
+          ],
+        ),
+        error: (err, stack) => Column(
+          children: [
+            Expanded(child: Center(child: Text('Error: $err'))),
+            if (tier == SubscriptionTier.free) const AdBanner(),
+          ],
+        ),
+      ),
     );
   }
 
@@ -563,4 +614,10 @@ class _ViewViewState extends ConsumerState<ViewView> {
       );
     }
   }
+}
+
+class _PaywallEntry extends StatelessWidget {
+  const _PaywallEntry();
+  @override
+  Widget build(BuildContext context) => const PaywallView();
 }

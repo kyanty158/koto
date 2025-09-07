@@ -12,6 +12,11 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:koto/services/notification_service.dart';
 // Removed unused selective import of Flutter types; they live in app_globals.dart
 import 'package:koto/app_globals.dart';
+import 'package:koto/services/iap_service.dart';
+import 'package:koto/services/ads_service.dart';
+
+// Screenshot-friendly: KPI overlay off by default. Enable with --dart-define=SHOW_KPI=true
+const bool showKpiOverlay = bool.fromEnvironment('SHOW_KPI', defaultValue: false);
 
 // KPIは app_globals に移動
 
@@ -56,7 +61,9 @@ Future<void> main() async {
   });
 
   debugPrint('[KPI] Init took: ${sw.elapsedMilliseconds} ms');
-  kpiInitMs.value = sw.elapsedMilliseconds;
+  if (showKpiOverlay) {
+    kpiInitMs.value = sw.elapsedMilliseconds;
+  }
 
   // Sentryは Release かつ DSN が設定されているときのみ有効化
   const dsn = String.fromEnvironment('SENTRY_DSN');
@@ -81,9 +88,19 @@ class MyApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     // isarProviderの状態を監視
     final isar = ref.watch(isarProvider);
+    // Initialize and watch IAP; this triggers restoration and updates subscriptionProvider
+    ref.watch(iapProvider);
+    // Initialize Ads once (Free users only see ads; init is idempotent)
+    final adsReady = ref.watch(adsInitializedProvider);
+    if (!adsReady) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ref.read(adsServiceProvider).initialize();
+      });
+    }
 
     return MaterialApp(
-      title: 'KOTO',
+      title: '秒メモ – メモ & リマインダー',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
@@ -93,53 +110,54 @@ class MyApp extends ConsumerWidget {
         return Stack(
           children: [
             if (child != null) child,
-            Positioned(
-              left: 8,
-              top: 8,
-              child: ValueListenableBuilder<int?>(
-                valueListenable: kpiInitMs,
-                builder: (context, val, _) {
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      if (val != null)
-                        GestureDetector(
-                          onTap: () => kpiInitMs.value = null,
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                            decoration: BoxDecoration(
-                              // Cross-version safe: avoid deprecated withOpacity and newer withValues
-                              color: const Color.fromRGBO(0, 0, 0, 0.6),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Text('起動: $val ms',
-                                style: const TextStyle(color: Colors.white, fontSize: 12)),
-                          ),
-                        ),
-                      const SizedBox(height: 4),
-                      ValueListenableBuilder<int?>(
-                        valueListenable: kpiWarmMs,
-                        builder: (context, warm, __) {
-                          if (warm == null) return const SizedBox.shrink();
-                          return GestureDetector(
-                            onTap: () => kpiWarmMs.value = null,
+            if (showKpiOverlay)
+              Positioned(
+                left: 8,
+                top: 8,
+                child: ValueListenableBuilder<int?>(
+                  valueListenable: kpiInitMs,
+                  builder: (context, val, _) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (val != null)
+                          GestureDetector(
+                            onTap: () => kpiInitMs.value = null,
                             child: Container(
                               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                               decoration: BoxDecoration(
+                                // Cross-version safe: avoid deprecated withOpacity and newer withValues
                                 color: const Color.fromRGBO(0, 0, 0, 0.6),
                                 borderRadius: BorderRadius.circular(8),
                               ),
-                              child: Text('復帰: $warm ms',
+                              child: Text('起動: $val ms',
                                   style: const TextStyle(color: Colors.white, fontSize: 12)),
                             ),
-                          );
-                        },
-                      ),
-                    ],
-                  );
-                },
+                          ),
+                        const SizedBox(height: 4),
+                        ValueListenableBuilder<int?>(
+                          valueListenable: kpiWarmMs,
+                          builder: (context, warm, __) {
+                            if (warm == null) return const SizedBox.shrink();
+                            return GestureDetector(
+                              onTap: () => kpiWarmMs.value = null,
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                decoration: BoxDecoration(
+                                  color: const Color.fromRGBO(0, 0, 0, 0.6),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Text('復帰: $warm ms',
+                                    style: const TextStyle(color: Colors.white, fontSize: 12)),
+                              ),
+                            );
+                          },
+                        ),
+                      ],
+                    );
+                  },
+                ),
               ),
-            ),
           ],
         );
       },

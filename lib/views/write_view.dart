@@ -13,6 +13,7 @@ import 'package:koto/widgets/reminder_badge.dart';
 import 'package:koto/services/subscription_service.dart';
 import 'package:koto/app_globals.dart';
 import 'package:koto/utils/tags.dart';
+import 'package:koto/views/paywall_view.dart';
 
 /// 「書く」モードの画面
 class WriteView extends ConsumerStatefulWidget {
@@ -43,13 +44,17 @@ class _WriteViewState extends ConsumerState<WriteView> with SingleTickerProvider
   // 右側のチェック付箋
   bool _showRightSaveCheck = false;
   String? _rightSaveLabel;
-  bool _dragFromHandle = false; // 右端ハンドルからのドラッグ中か
+  bool _dragFromHandle = false; // ハンドル（下中央）からのドラッグ中か
 
   // 閾値（微調整しやすいよう定数化）
   // さらに緩和して“軽いドラッグ”で反応させる
   static const double _dragShowRailThresholdX = 8;  // レール出現をより早く
   static const double _dragActionThresholdX = 24;   // 保存・破棄の必要移動量も短く
   static const double _dragActionThresholdY = 80;   // 縦方向保存の必要移動量を軽減
+
+  // 下中央ハンドルのタッチ領域サイズ
+  static const double _handleTouchHeight = 36; // 下端からの高さ
+  static const double _handleTouchHalfWidth = 60; // 中央から左右の幅
 
   // ドロップレール用（ヒットテスト計算と選択ハイライト）
   int? _hoverTargetIndex;
@@ -124,7 +129,7 @@ class _WriteViewState extends ConsumerState<WriteView> with SingleTickerProvider
     } else if (hour < 18) {
       return 'こんにちは。アイデアをどうぞ。';
     } else {
-      return 'こんばんは。今日を振り返りましょう。';
+      return 'こんにちは。何か覚えておくことは？';
     }
   }
 
@@ -148,7 +153,18 @@ class _WriteViewState extends ConsumerState<WriteView> with SingleTickerProvider
       if (count >= 5) {
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('今月のリマインダー上限（5件）に達しました')),
+          SnackBar(
+            content: const Text('今月のリマインダー上限（5件）に達しました'),
+            action: SnackBarAction(
+              label: 'Proにする',
+              onPressed: () async {
+                if (!mounted) return;
+                await Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const PaywallView()),
+                );
+              },
+            ),
+          ),
         );
         return;
       }
@@ -374,11 +390,14 @@ class _WriteViewState extends ConsumerState<WriteView> with SingleTickerProvider
                   FocusScope.of(context).requestFocus(_focusNode);
                 },
                 onPanStart: (details) {
-                  // 右側からのドラッグのみ受け付ける（カード幅の60%より右）
+                  // 下中央のグリップ領域からのドラッグのみ受け付ける
                   final box = _cardKey.currentContext?.findRenderObject() as RenderBox?;
                   if (box != null && box.hasSize) {
                     final local = box.globalToLocal(details.globalPosition);
-                    if (local.dx > box.size.width * 0.6) {
+                    final bool inBottomBand = local.dy > (box.size.height - _handleTouchHeight);
+                    final double cx = box.size.width / 2;
+                    final bool inCenterX = (local.dx - cx).abs() < _handleTouchHalfWidth;
+                    if (inBottomBand && inCenterX) {
                       _dragFromHandle = true;
                     }
                   }
@@ -414,7 +433,9 @@ class _WriteViewState extends ConsumerState<WriteView> with SingleTickerProvider
                             controller: _textController,
                             focusNode: _focusNode,
                             maxLines: null,
-                            enableInteractiveSelection: false, // ドラッグ操作優先（MVP）
+                            // IME（特にサードパーティ）の変換中テキスト保持のため有効にする
+                            // 日本語入力での重複/残留テキストを防ぐ観点で true（デフォルト）
+                            enableInteractiveSelection: true,
                             decoration: InputDecoration(
                               border: InputBorder.none,
                               hintText: _getGreeting(),
@@ -423,28 +444,33 @@ class _WriteViewState extends ConsumerState<WriteView> with SingleTickerProvider
                             style: const TextStyle(fontSize: 18.0),
                           ),
                         ),
-                        // 右端グラブハンドル（ここからドラッグで操作開始）
+                        // 下中央グラブハンドル（ここからドラッグで操作開始）
                         Align(
-                          alignment: Alignment.centerRight,
+                          alignment: Alignment.bottomCenter,
                           child: SizedBox(
-                            width: 28,
-                            height: double.infinity,
+                            width: 96,
+                            height: 28,
                             child: IgnorePointer(
                               ignoring: true,
                               child: Padding(
-                                padding: const EdgeInsets.only(right: 6.0),
+                                padding: const EdgeInsets.only(bottom: 6.0),
                                 child: Opacity(
                                   opacity: 0.18,
-                                  child: Column(
+                                  child: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
                                     children: const [
-                                      SizedBox(height: 4),
+                                      SizedBox(width: 4),
                                       _GripDot(),
+                                      SizedBox(width: 4),
                                       _GripDot(),
+                                      SizedBox(width: 4),
                                       _GripDot(),
+                                      SizedBox(width: 4),
                                       _GripDot(),
+                                      SizedBox(width: 4),
                                       _GripDot(),
-                                      SizedBox(height: 4),
+                                      SizedBox(width: 4),
                                     ],
                                   ),
                                 ),
@@ -477,7 +503,7 @@ class _WriteViewState extends ConsumerState<WriteView> with SingleTickerProvider
       );
   }
 
-  // 共通ドラッグ処理（右端ハンドル/外側オーバーレイから呼ばれる）
+  // 共通ドラッグ処理（ハンドル/外側オーバーレイから呼ばれる）
   void _handleDragUpdate(DragUpdateDetails details) {
     final wasShowing = _showReminderChoices;
     setState(() {

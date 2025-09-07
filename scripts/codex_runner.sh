@@ -18,6 +18,11 @@ while true; do
     continue
   fi
 
+  # Move the picked task from todo -> doing if yq is available (idempotent-ish)
+  if command -v yq >/dev/null 2>&1; then
+    yq -i '.doing += [ .todo[0] ] | .todo |= del(.[0])' .codex/tasks.yaml || true
+  fi
+
   TASK_BLOCK=$(awk -v id="$TASK_ID" '
     $0 ~ "- id: " id {flag=1}
     flag {print}
@@ -60,7 +65,11 @@ EOF
     git commit -m "feat(${TASK_ID}): auto-impl by codex-runner"
   fi
 
-  echo "[runner] ${TASK_ID} を処理完了（仮）。次へ。"
+  # Mark doing -> done if yq is available
+  if command -v yq >/dev/null 2>&1; then
+    yq -i '.done += .doing | .doing = []' .codex/tasks.yaml || true
+  fi
+
+  echo "[runner] ${TASK_ID} を処理完了。次へ。"
   sleep 5
 done
-

@@ -1,5 +1,6 @@
-package com.example.koto
+package com.kantiva.koto
 
 import io.flutter.embedding.android.FlutterActivity
 
 class MainActivity: FlutterActivity()
+
