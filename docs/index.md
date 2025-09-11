@@ -14,5 +14,4 @@ title: 秒メモ – メモ & リマインダー
 
 ## サポート
 困ったときはサポートページをご覧ください。
-- https://<your-pages-domain>/support  （GitHub Pages 公開後のURLに置き換わります）
-
+- https://kyanty158.github.io/koto/support
