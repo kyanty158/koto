@@ -1,0 +1,30 @@
+# Jekyll設定ファイル
+title: 秒メモ – メモ & リマインダー
+description: ひらめきを1秒で書き留め、右スワイプでリマインド
+url: https://kyanty158.github.io
+baseurl: /koto
+
+# カスタムレイアウトを使用するため、テーマは指定しない
+# プラグイン
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
+
+# 除外ファイル
+exclude:
+  - README.md
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - vendor/bundle/
+  - vendor/cache/
+  - vendor/gems/
+  - vendor/ruby/
+
+# デフォルト設定
+defaults:
+  - scope:
+      path: ""
+    values:
+      layout: default
+

@@ -1,16 +1,54 @@
-# koto
+# KOTO Native iOS App
 
-A new Flutter project.
+The Flutter MVP has now been migrated to a SwiftUI-first implementation. Native source, data layer, notifications, and subscription flow all live inside the Swift package and the new Xcode project.
 
-## Getting Started
+## Repository Layout
 
-This project is a starting point for a Flutter application.
+- `KotoApp/` — Xcode project (`KotoApp.xcodeproj`) that ships the iOS app and shared UI / UI test targets.
+- `ios-native/` — Swift Package containing the production modules (Core Data stack, features, services) and Swift package unit tests.
+- `legacy/flutter/` — Archived Flutter sources that previously powered the MVP.
+- `docs/ios_swift_architecture.md` — High level architecture notes.
 
-A few resources to get you started if this is your first Flutter project:
+## Building & Running
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+1. Open `KotoApp/KotoApp.xcodeproj` in Xcode 15 or later.
+2. The `KotoApp` scheme already links the `KotoApp` Swift package and sets `KotoAppScene` as the entry point.
+3. Run on an iOS 15+ simulator; notification permissions are requested on first launch, and notification actions deep-link into the edit sheet.
+4. The Settings tab exposes the new StoreKit-based Pro upgrade flow.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Tests
+
+### Swift Package (Core Data, business logic)
+
+```bash
+cd ios-native
+SWIFT_MODULECACHE_PATH=.build/swift-module-cache \
+CLANG_MODULE_CACHE_PATH=.build/clang-module-cache \
+swift test
+```
+
+### Xcode Unit & UI Tests
+
+```bash
+xcodebuild \
+  -project KotoApp/KotoApp.xcodeproj \
+  -scheme KotoApp \
+  -destination 'platform=iOS Simulator,name=iPhone 15' \
+  clean test
+```
+
+The Swift Package suite now covers Core Data create/update/delete flows, Basic tier reminder quotas, reminder preset calculations, and the Xcode UI suite verifies the tab layout plus the Pro paywall entry point.
+
+## CI
+
+GitHub Actions (`.github/workflows/ios.yml`) runs the Swift package tests followed by an iOS simulator build/test for the `KotoApp` scheme on every push and pull request targeting `main`.
+
+## Documentation & Website
+
+Documentation and marketing pages are hosted on GitHub Pages:
+
+- **Home**: https://kyanty158.github.io/koto/
+- **Support**: https://kyanty158.github.io/koto/support
+- **Privacy Policy**: https://kyanty158.github.io/koto/privacy
+
+The website is built using Jekyll and automatically deployed from the `docs/` directory. See `docs/GITHUB_PAGES_SETUP.md` for setup instructions.

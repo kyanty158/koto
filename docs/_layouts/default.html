@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if page.title %}{{ page.title }} - {% endif %}{{ site.title }}</title>
+    <meta name="description" content="{% if page.description %}{{ page.description }}{% else %}{{ site.description }}{% endif %}">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #fff;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e1e4e8;
+        }
+        header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            color: #24292e;
+        }
+        nav {
+            margin-top: 20px;
+        }
+        nav a {
+            margin-right: 20px;
+            text-decoration: none;
+            color: #0366d6;
+            font-weight: 500;
+        }
+        nav a:hover {
+            text-decoration: underline;
+        }
+        nav a.active {
+            color: #24292e;
+            font-weight: 600;
+        }
+        main {
+            min-height: 400px;
+        }
+        main h1 {
+            font-size: 32px;
+            margin-bottom: 20px;
+            color: #24292e;
+        }
+        main h2 {
+            font-size: 24px;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            color: #24292e;
+        }
+        main h3 {
+            font-size: 20px;
+            margin-top: 25px;
+            margin-bottom: 10px;
+            color: #24292e;
+        }
+        main ul, main ol {
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+        main li {
+            margin-bottom: 8px;
+        }
+        main a {
+            color: #0366d6;
+            text-decoration: none;
+        }
+        main a:hover {
+            text-decoration: underline;
+        }
+        footer {
+            margin-top: 60px;
+            padding-top: 20px;
+            border-top: 1px solid #e1e4e8;
+            color: #6a737d;
+            font-size: 14px;
+            text-align: center;
+        }
+        @media (max-width: 600px) {
+            .container {
+                padding: 15px;
+            }
+            header h1 {
+                font-size: 24px;
+            }
+            main h1 {
+                font-size: 28px;
+            }
+            nav a {
+                display: inline-block;
+                margin-bottom: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>{{ site.title }}</h1>
+            <nav>
+                <a href="{{ site.baseurl }}/" {% if page.url == '/' or page.url == '/index.html' %}class="active"{% endif %}>ホーム</a>
+                <a href="{{ site.baseurl }}/support" {% if page.url == '/support.html' or page.url == '/support/' %}class="active"{% endif %}>サポート</a>
+                <a href="{{ site.baseurl }}/privacy" {% if page.url == '/privacy.html' or page.url == '/privacy/' %}class="active"{% endif %}>プライバシーポリシー</a>
+            </nav>
+        </header>
+        <main>
+            {{ content }}
+        </main>
+        <footer>
+            <p>&copy; {{ 'now' | date: "%Y" }} 秒メモ – メモ & リマインダー</p>
+        </footer>
+    </div>
+</body>
+</html>
+
