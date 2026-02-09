@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,40 +12,73 @@
             --text: #1D1D1F;
             --secondary: #86868B;
         }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: var(--bg);
             color: var(--text);
             line-height: 1.6;
         }
+
         .hero {
             background: linear-gradient(135deg, var(--primary) 0%, #7B68EE 100%);
             color: white;
             padding: 80px 20px;
             text-align: center;
         }
-        .hero h1 { font-size: 2.5em; margin-bottom: 16px; }
-        .hero p { font-size: 1.2em; opacity: 0.9; max-width: 600px; margin: 0 auto; }
-        .container { max-width: 800px; margin: 0 auto; padding: 60px 20px; }
-        .features { display: grid; gap: 40px; }
+
+        .hero h1 {
+            font-size: 2.5em;
+            margin-bottom: 16px;
+        }
+
+        .hero p {
+            font-size: 1.2em;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 60px 20px;
+        }
+
+        .features {
+            display: grid;
+            gap: 40px;
+        }
+
         .feature {
             background: white;
             border-radius: 16px;
             padding: 32px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
         }
+
         .feature h3 {
             color: var(--primary);
             font-size: 1.3em;
             margin-bottom: 12px;
         }
-        .feature p { color: var(--secondary); }
+
+        .feature p {
+            color: var(--secondary);
+        }
+
         .cta {
             text-align: center;
             padding: 60px 20px;
             background: white;
         }
+
         .cta a {
             display: inline-block;
             background: var(--primary);
@@ -55,15 +89,20 @@
             font-weight: 600;
             font-size: 1.1em;
         }
+
         footer {
             text-align: center;
             padding: 40px 20px;
             color: var(--secondary);
             font-size: 0.9em;
         }
-        footer a { color: var(--primary); }
+
+        footer a {
+            color: var(--primary);
+        }
     </style>
 </head>
+
 <body>
     <section class="hero">
         <h1>📝 すぐメモ</h1>
@@ -92,12 +131,15 @@
     </div>
 
     <section class="cta">
-        <a href="https://apps.apple.com/app/id0000000000">App Storeでダウンロード</a>
+        <span
+            style="display: inline-block; background: #86868B; color: white; padding: 16px 40px; border-radius: 30px; font-weight: 600; font-size: 1.1em;">App
+            Store 準備中</span>
     </section>
 
     <footer>
-        <p>© 2024 すぐメモ. All rights reserved.</p>
+        <p>© 2026 すぐメモ. All rights reserved.</p>
         <p><a href="privacy.html">プライバシーポリシー</a></p>
     </footer>
 </body>
+
 </html>
