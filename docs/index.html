@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>すぐメモ - 1秒で起動、その瞬間を逃さない</title>
+    <style>
+        :root {
+            --primary: #5856D6;
+            --bg: #F5F5F7;
+            --text: #1D1D1F;
+            --secondary: #86868B;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+        .hero {
+            background: linear-gradient(135deg, var(--primary) 0%, #7B68EE 100%);
+            color: white;
+            padding: 80px 20px;
+            text-align: center;
+        }
+        .hero h1 { font-size: 2.5em; margin-bottom: 16px; }
+        .hero p { font-size: 1.2em; opacity: 0.9; max-width: 600px; margin: 0 auto; }
+        .container { max-width: 800px; margin: 0 auto; padding: 60px 20px; }
+        .features { display: grid; gap: 40px; }
+        .feature {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        }
+        .feature h3 {
+            color: var(--primary);
+            font-size: 1.3em;
+            margin-bottom: 12px;
+        }
+        .feature p { color: var(--secondary); }
+        .cta {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+        }
+        .cta a {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 16px 40px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1em;
+        }
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--secondary);
+            font-size: 0.9em;
+        }
+        footer a { color: var(--primary); }
+    </style>
+</head>
+<body>
+    <section class="hero">
+        <h1>📝 すぐメモ</h1>
+        <p>1秒で起動、その瞬間を逃さない。<br>思いついた瞬間にメモ、未来の自分にリマインド。</p>
+    </section>
+
+    <div class="container">
+        <div class="features">
+            <div class="feature">
+                <h3>⚡️ 爆速起動</h3>
+                <p>アプリを開いた瞬間、キーボードが即座に表示。入力欄をタップする手間すらありません。起動から入力開始まで約1秒。</p>
+            </div>
+            <div class="feature">
+                <h3>🔔 直感リマインダー</h3>
+                <p>「10分後」「今夜」「明日朝」などのプリセットから選ぶだけ。面倒な時刻設定は不要。未来の自分へメッセージを送れます。</p>
+            </div>
+            <div class="feature">
+                <h3>🛡️ 完全オフライン</h3>
+                <p>データは全て端末内に保存。通信待ちゼロで、機内モードでも地下鉄でもサクサク動きます。</p>
+            </div>
+            <div class="feature">
+                <h3>✨ シンプル操作</h3>
+                <p>「破棄」「保存」「保存＋通知」の3ボタンだけで操作完結。2本指タップでUndo（元に戻す）も可能。</p>
+            </div>
+        </div>
+    </div>
+
+    <section class="cta">
+        <a href="https://apps.apple.com/app/id0000000000">App Storeでダウンロード</a>
+    </section>
+
+    <footer>
+        <p>© 2024 すぐメモ. All rights reserved.</p>
+        <p><a href="privacy.html">プライバシーポリシー</a></p>
+    </footer>
+</body>
+</html>
