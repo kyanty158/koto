@@ -32,7 +32,7 @@ while true; do
   DIFF=$(git status --porcelain; git diff --patch --stat | tail -n +1 | sed -e 's/^/    /')
 
   read -r -d '' PAYLOAD <<'EOF'
-あなたは最高水準のFlutter+Firebaseアプリ開発エージェントです。
+あなたは最高水準のSwiftUI + Core Data + StoreKit アプリ開発エージェントです。
 - 目的: リポジトリの次タスクを安全に実装して前進させる。
 - 厳守: .codex/guardrails.md、プロジェクト規約、既存アーキに準拠。
 - 出力: 「変更方針 → 変更ファイルと差分 → 実行/テスト手順」を明記。
@@ -55,10 +55,20 @@ EOF
   TS=$(date +"%Y%m%d_%H%M%S")
   echo "$RESPONSE" > ".codex/logs/${TS}_${TASK_ID}.md"
 
-  (flutter pub get || true)
-  (dart format -o write . || true)
-  (flutter analyze || true)
-  (flutter test || true)
+  (
+    cd ios-native
+    SWIFT_MODULECACHE_PATH=.build/swift-module-cache \
+    CLANG_MODULE_CACHE_PATH=.build/clang-module-cache \
+    swift test || true
+  )
+  (
+    set -o pipefail
+    xcodebuild \
+      -project KotoApp/KotoApp.xcodeproj \
+      -scheme KotoApp \
+      -destination 'platform=iOS Simulator,name=iPhone 15' \
+      test || true
+  )
 
   if ! git diff --quiet; then
     git add -A

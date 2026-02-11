@@ -42,13 +42,3 @@ The Swift Package suite now covers Core Data create/update/delete flows, Basic t
 ## CI
 
 GitHub Actions (`.github/workflows/ios.yml`) runs the Swift package tests followed by an iOS simulator build/test for the `KotoApp` scheme on every push and pull request targeting `main`.
-
-## Documentation & Website
-
-Documentation and marketing pages are hosted on GitHub Pages:
-
-- **Home**: https://kyanty158.github.io/koto/
-- **Support**: https://kyanty158.github.io/koto/support
-- **Privacy Policy**: https://kyanty158.github.io/koto/privacy
-
-The website is built using Jekyll and automatically deployed from the `docs/` directory. See `docs/GITHUB_PAGES_SETUP.md` for setup instructions.

@@ -1,0 +1,538 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 60;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		9A2B50D02B7E5A7A00A1F1D4 /* AppEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A2B50D72B7E5A7A00A1F1D4 /* AppEntry.swift */; };
+		9A2B50E52B7E5A7A00A1F1D4 /* KotoAppTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A2B50E62B7E5A7A00A1F1D4 /* KotoAppTests.swift */; };
+		9A2B50EF2B7E5A7A00A1F1D4 /* KotoAppUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A2B50F02B7E5A7A00A1F1D4 /* KotoAppUITests.swift */; };
+		9A2B50F62B7E5A7A00A1F1D4 /* KotoKit in Frameworks */ = {isa = PBXBuildFile; productRef = 9A2B50F52B7E5A7A00A1F1D4 /* KotoKit */; };
+		9A2B51002B7E5A7A00A1F1D4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9A2B50D92B7E5A7A00A1F1D4 /* Assets.xcassets */; };
+		9A2B51012B7E5A7A00A1F1D4 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9A2B50DA2B7E5A7A00A1F1D4 /* LaunchScreen.storyboard */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		9A2B50FB2B7E5A7A00A1F1D4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 9A2B50C62B7E5A7A00A1F1D4 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 9A2B50CE2B7E5A7A00A1F1D4;
+			remoteInfo = KotoApp;
+		};
+		9A2B50FD2B7E5A7A00A1F1D4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 9A2B50C62B7E5A7A00A1F1D4 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 9A2B50CE2B7E5A7A00A1F1D4;
+			remoteInfo = KotoApp;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		9A2B50CF2B7E5A7A00A1F1D4 /* KotoApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = KotoApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		9A2B50D72B7E5A7A00A1F1D4 /* AppEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppEntry.swift; sourceTree = "<group>"; };
+		9A2B50D82B7E5A7A00A1F1D4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		9A2B50D92B7E5A7A00A1F1D4 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		9A2B50DA2B7E5A7A00A1F1D4 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
+		9A2B50E12B7E5A7A00A1F1D4 /* KotoAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = KotoAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		9A2B50E62B7E5A7A00A1F1D4 /* KotoAppTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KotoAppTests.swift; sourceTree = "<group>"; };
+		9A2B50EB2B7E5A7A00A1F1D4 /* KotoAppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = KotoAppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		9A2B50F02B7E5A7A00A1F1D4 /* KotoAppUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KotoAppUITests.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		9A2B50D22B7E5A7A00A1F1D4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9A2B50F62B7E5A7A00A1F1D4 /* KotoKit in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9A2B50E32B7E5A7A00A1F1D4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9A2B50ED2B7E5A7A00A1F1D4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		9A2B50C72B7E5A7A00A1F1D4 = {
+			isa = PBXGroup;
+			children = (
+				9A2B50DB2B7E5A7A00A1F1D4 /* KotoApp */,
+				9A2B50DC2B7E5A7A00A1F1D4 /* KotoAppTests */,
+				9A2B50DD2B7E5A7A00A1F1D4 /* KotoAppUITests */,
+				9A2B50DE2B7E5A7A00A1F1D4 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		9A2B50DB2B7E5A7A00A1F1D4 /* KotoApp */ = {
+			isa = PBXGroup;
+			children = (
+				9A2B50D72B7E5A7A00A1F1D4 /* AppEntry.swift */,
+				9A2B50D82B7E5A7A00A1F1D4 /* Info.plist */,
+				9A2B50D92B7E5A7A00A1F1D4 /* Assets.xcassets */,
+				9A2B50DA2B7E5A7A00A1F1D4 /* LaunchScreen.storyboard */,
+			);
+			path = KotoApp;
+			sourceTree = "<group>";
+		};
+		9A2B50DC2B7E5A7A00A1F1D4 /* KotoAppTests */ = {
+			isa = PBXGroup;
+			children = (
+				9A2B50E62B7E5A7A00A1F1D4 /* KotoAppTests.swift */,
+			);
+			path = KotoAppTests;
+			sourceTree = "<group>";
+		};
+		9A2B50DD2B7E5A7A00A1F1D4 /* KotoAppUITests */ = {
+			isa = PBXGroup;
+			children = (
+				9A2B50F02B7E5A7A00A1F1D4 /* KotoAppUITests.swift */,
+			);
+			path = KotoAppUITests;
+			sourceTree = "<group>";
+		};
+		9A2B50DE2B7E5A7A00A1F1D4 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				9A2B50CF2B7E5A7A00A1F1D4 /* KotoApp.app */,
+				9A2B50E12B7E5A7A00A1F1D4 /* KotoAppTests.xctest */,
+				9A2B50EB2B7E5A7A00A1F1D4 /* KotoAppUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		9A2B50CE2B7E5A7A00A1F1D4 /* KotoApp */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9A2B50D42B7E5A7A00A1F1D4 /* Build configuration list for PBXNativeTarget "KotoApp" */;
+			buildPhases = (
+				9A2B50D12B7E5A7A00A1F1D4 /* Sources */,
+				9A2B50D22B7E5A7A00A1F1D4 /* Frameworks */,
+				9A2B50D32B7E5A7A00A1F1D4 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = KotoApp;
+			packageProductDependencies = (
+				9A2B50F52B7E5A7A00A1F1D4 /* KotoKit */,
+			);
+			productName = KotoApp;
+			productReference = 9A2B50CF2B7E5A7A00A1F1D4 /* KotoApp.app */;
+			productType = "com.apple.product-type.application";
+		};
+		9A2B50E02B7E5A7A00A1F1D4 /* KotoAppTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9A2B50E72B7E5A7A00A1F1D4 /* Build configuration list for PBXNativeTarget "KotoAppTests" */;
+			buildPhases = (
+				9A2B50E22B7E5A7A00A1F1D4 /* Sources */,
+				9A2B50E32B7E5A7A00A1F1D4 /* Frameworks */,
+				9A2B50E42B7E5A7A00A1F1D4 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				9A2B50FA2B7E5A7A00A1F1D4 /* PBXTargetDependency */,
+			);
+			name = KotoAppTests;
+			productName = KotoAppTests;
+			productReference = 9A2B50E12B7E5A7A00A1F1D4 /* KotoAppTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		9A2B50EA2B7E5A7A00A1F1D4 /* KotoAppUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9A2B50F12B7E5A7A00A1F1D4 /* Build configuration list for PBXNativeTarget "KotoAppUITests" */;
+			buildPhases = (
+				9A2B50EC2B7E5A7A00A1F1D4 /* Sources */,
+				9A2B50ED2B7E5A7A00A1F1D4 /* Frameworks */,
+				9A2B50EE2B7E5A7A00A1F1D4 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				9A2B50FC2B7E5A7A00A1F1D4 /* PBXTargetDependency */,
+			);
+			name = KotoAppUITests;
+			productName = KotoAppUITests;
+			productReference = 9A2B50EB2B7E5A7A00A1F1D4 /* KotoAppUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		9A2B50C62B7E5A7A00A1F1D4 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastSwiftUpdateCheck = 1530;
+				LastUpgradeCheck = 1530;
+				TargetAttributes = {
+					9A2B50E02B7E5A7A00A1F1D4 = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Automatic;
+					};
+					9A2B50EA2B7E5A7A00A1F1D4 = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 9A2B50F72B7E5A7A00A1F1D4 /* Build configuration list for PBXProject "KotoApp" */;
+			compatibilityVersion = "Xcode 15.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+				ja,
+			);
+			mainGroup = 9A2B50C72B7E5A7A00A1F1D4;
+			packageReferences = (
+				9A2B51022B7E5A7A00A1F1D4 /* XCLocalSwiftPackageReference "ios-native" */,
+			);
+			productRefGroup = 9A2B50DE2B7E5A7A00A1F1D4 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				9A2B50CE2B7E5A7A00A1F1D4 /* KotoApp */,
+				9A2B50E02B7E5A7A00A1F1D4 /* KotoAppTests */,
+				9A2B50EA2B7E5A7A00A1F1D4 /* KotoAppUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		9A2B50D32B7E5A7A00A1F1D4 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9A2B51002B7E5A7A00A1F1D4 /* Assets.xcassets in Resources */,
+				9A2B51012B7E5A7A00A1F1D4 /* LaunchScreen.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9A2B50E42B7E5A7A00A1F1D4 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9A2B50EE2B7E5A7A00A1F1D4 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		9A2B50D12B7E5A7A00A1F1D4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9A2B50D02B7E5A7A00A1F1D4 /* AppEntry.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9A2B50E22B7E5A7A00A1F1D4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9A2B50E52B7E5A7A00A1F1D4 /* KotoAppTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9A2B50EC2B7E5A7A00A1F1D4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9A2B50EF2B7E5A7A00A1F1D4 /* KotoAppUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		9A2B50FA2B7E5A7A00A1F1D4 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 9A2B50CE2B7E5A7A00A1F1D4 /* KotoApp */;
+			targetProxy = 9A2B50FB2B7E5A7A00A1F1D4 /* PBXContainerItemProxy */;
+		};
+		9A2B50FC2B7E5A7A00A1F1D4 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 9A2B50CE2B7E5A7A00A1F1D4 /* KotoApp */;
+			targetProxy = 9A2B50FD2B7E5A7A00A1F1D4 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		9A2B50D52B7E5A7A00A1F1D4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 6;
+				DEVELOPMENT_TEAM = WJM784766U;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = KotoApp/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = app.koto.ios;
+				PRODUCT_MODULE_NAME = KotoiOSApp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.9;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		9A2B50D62B7E5A7A00A1F1D4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 6;
+				DEVELOPMENT_TEAM = WJM784766U;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = KotoApp/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = app.koto.ios;
+				PRODUCT_MODULE_NAME = KotoiOSApp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.9;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		9A2B50E82B7E5A7A00A1F1D4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				PRODUCT_BUNDLE_IDENTIFIER = app.koto.iosTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphonesimulator;
+				SUPPORTED_PLATFORMS = iphonesimulator;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.9;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/KotoApp.app/KotoApp";
+			};
+			name = Debug;
+		};
+		9A2B50E92B7E5A7A00A1F1D4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				PRODUCT_BUNDLE_IDENTIFIER = app.koto.iosTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphonesimulator;
+				SUPPORTED_PLATFORMS = iphonesimulator;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.9;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/KotoApp.app/KotoApp";
+			};
+			name = Release;
+		};
+		9A2B50F22B7E5A7A00A1F1D4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				PRODUCT_BUNDLE_IDENTIFIER = app.koto.iosUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphonesimulator;
+				SUPPORTED_PLATFORMS = iphonesimulator;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.9;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_TARGET_NAME = KotoApp;
+			};
+			name = Debug;
+		};
+		9A2B50F32B7E5A7A00A1F1D4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				PRODUCT_BUNDLE_IDENTIFIER = app.koto.iosUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphonesimulator;
+				SUPPORTED_PLATFORMS = iphonesimulator;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.9;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_TARGET_NAME = KotoApp;
+			};
+			name = Release;
+		};
+		9A2B50F82B7E5A7A00A1F1D4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				ONLY_ACTIVE_ARCH = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_VERSION = 5.9;
+			};
+			name = Debug;
+		};
+		9A2B50F92B7E5A7A00A1F1D4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.9;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		9A2B50D42B7E5A7A00A1F1D4 /* Build configuration list for PBXNativeTarget "KotoApp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9A2B50D52B7E5A7A00A1F1D4 /* Debug */,
+				9A2B50D62B7E5A7A00A1F1D4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		9A2B50E72B7E5A7A00A1F1D4 /* Build configuration list for PBXNativeTarget "KotoAppTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9A2B50E82B7E5A7A00A1F1D4 /* Debug */,
+				9A2B50E92B7E5A7A00A1F1D4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		9A2B50F12B7E5A7A00A1F1D4 /* Build configuration list for PBXNativeTarget "KotoAppUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9A2B50F22B7E5A7A00A1F1D4 /* Debug */,
+				9A2B50F32B7E5A7A00A1F1D4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		9A2B50F72B7E5A7A00A1F1D4 /* Build configuration list for PBXProject "KotoApp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9A2B50F82B7E5A7A00A1F1D4 /* Debug */,
+				9A2B50F92B7E5A7A00A1F1D4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		9A2B51022B7E5A7A00A1F1D4 /* XCLocalSwiftPackageReference "ios-native" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = "../ios-native";
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		9A2B50F52B7E5A7A00A1F1D4 /* KotoKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9A2B51022B7E5A7A00A1F1D4 /* XCLocalSwiftPackageReference "ios-native" */;
+			productName = KotoKit;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 9A2B50C62B7E5A7A00A1F1D4 /* Project object */;
+}
